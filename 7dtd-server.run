@@ -1,2 +1,7 @@
 #!/bin/bash
-docker run -d -p 8080:8080 -p 8081:8081 -p 26900:26900 -p 26901:26901 -p 26902:26902 --name="7dtd" 7dtd
+
+if [ ! -d /tmp/livingdead ]; then
+    mkdir /tmp/livingdead
+fi
+
+docker run --net="host" -d -p 8080:8080 -p 8081:8081 -p 26900:26900 -p 26901:26901 -p 26902:26902 --name="7dtd" 7dtd
