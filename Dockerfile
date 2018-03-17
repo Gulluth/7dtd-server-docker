@@ -1,23 +1,20 @@
 FROM debian:latest
+MAINTAINER mudfly <mudfly@gmail.com>
 
-MAINTAINER mudfly
+RUN dpkg --add-architecture i386 && \
+    apt-get update && apt-get install -y \
+      lib32gcc1 \
+      wget \
+      xmlstarlet && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -ms /bin/bash zed && \
+    mkdir -p /7dtd/bin
 
-# Install dependencies
-RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y \
-    lib32gcc1 \
-    wget \
-    xmlstarlet \
-&& rm -rf /var/lib/apt/lists/*
+COPY serverconfig.xml /7dtd/serverconfig.xml
+COPY 7dtd.sh /7dtd/bin/7dtd.sh
+RUN chown -R zed:zed /7dtd
 
-# Creates 7dtd server as a service
-RUN useradd -ms /bin/bash livingdead
-WORKDIR /home/livingdead
-COPY serverconfig.xml serverconfig.xml
-COPY 7dtd.sh bin/7dtd
-RUN chown -R livingdead:livingdead /home/livingdead
-
-# Expose the default 7dtd server port
-EXPOSE 8080/tcp 8081/tcp
-EXPOSE 26900 26901 26902
-
-CMD ["/home/livingdead/bin/7dtd"]
+VOLUME ["/7dtd"]
+EXPOSE 8080/tcp 8081/tcp 26900 26901 26902
+WORKDIR /7dtd
+CMD ["/7dtd/bin/7dtd.sh"]
