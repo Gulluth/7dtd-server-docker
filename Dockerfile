@@ -1,23 +1,28 @@
+
 FROM debian:latest
+LABEL maintainer="mudfly <mudfly@gmail.com>"
 
-MAINTAINER mudfly
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
+      curl \
+      lib32gcc1 \
+      xmlstarlet && \
+    apt-get clean all
 
-# Install dependencies
-RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y \
-    lib32gcc1 \
-    wget \
-    xmlstarlet \
-&& rm -rf /var/lib/apt/lists/*
+ENV STEAM_HOME="/steam"
+ENV DATA_HOME="/data"
 
-# Creates 7dtd server as a service
-RUN useradd -ms /bin/bash livingdead
-WORKDIR /home/livingdead
-COPY serverconfig.xml serverconfig.xml
-COPY 7dtd.sh bin/7dtd
-RUN chown -R livingdead:livingdead /home/livingdead
+RUN /usr/sbin/useradd -d ${DATA_HOME} -M -s /bin/bash zed && \
+    /bin/mkdir ${STEAM_HOME} && \
+    /bin/chown -R zed:zed ${STEAM_HOME}
 
-# Expose the default 7dtd server port
-EXPOSE 8080/tcp 8081/tcp
-EXPOSE 26900 26901 26902
+USER zed
 
-CMD ["/home/livingdead/bin/7dtd"]
+RUN curl -s https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar xvz -C ${STEAM_HOME}
+
+COPY --chown=zed:zed 7dtd.sh /7dtd.sh
+
+VOLUME ["/data"]
+EXPOSE 8080/tcp 8081/tcp 26900 26901 26902
+CMD ["/bin/bash", "/7dtd.sh"]
