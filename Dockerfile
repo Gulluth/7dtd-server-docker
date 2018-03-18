@@ -24,5 +24,5 @@ RUN curl -s https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.
 COPY --chown=zed:zed 7dtd.sh /7dtd.sh
 
 VOLUME ["/data"]
-EXPOSE 8080/tcp 8081/tcp 26900 26901 26902
+EXPOSE 8080/tcp 8081/tcp 26900/udp 26901/udp 26902/udp
 CMD ["/bin/bash", "/7dtd.sh"]
