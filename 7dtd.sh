@@ -7,11 +7,10 @@ set -e
 PARAMS="$@"
 
 if [ ! -d ${DATA_HOME}/log ]; then
-  echo "$(date +%Y%m%d% %T) Creating directory ${DATA_HOME}/log" >> ${LOGFILE}
   mkdir ${DATA_HOME}/log
 fi
 
-LOGFILE="${DATA_HOME}/log/7dtd-server-$(date +%Y%m%d).log"
+LOGFILE="${DATA_HOME}/log/7dtd-launcher-$(date +%Y%m%d).log"
 
 echo "$(date +%Y%m%d %T) Checking for server updates" >> ${LOGFILE}
 ${STEAM_HOME}/steamcmd.sh \
@@ -30,5 +29,5 @@ echo "$(date +%Y%m%d% %T) Launching 7 Days to Die Server" >> ${LOGFILE}
 export LD_LIBRARY_PATH=${DATA_HOME}/server:$LD_LIBRARY_PATH
 ${DATA_HOME}/server/7DaysToDieServer.x86_64 \
   -configfile=${DATA_HOME}/serverconfig.xml \
-  -logfile ${LOGFILE} \
+  -logfile ${DATA_HOME/log/7dtd-server-$(date +%Y%m%d).log} \
   -quit -batchmode -nographics -dedicated ${PARAMS}
