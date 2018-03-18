@@ -29,5 +29,5 @@ echo "$(date +%Y%m%d% %T) Launching 7 Days to Die Server" >> ${LOGFILE}
 export LD_LIBRARY_PATH=${DATA_HOME}/server:$LD_LIBRARY_PATH
 ${DATA_HOME}/server/7DaysToDieServer.x86_64 \
   -configfile=${DATA_HOME}/serverconfig.xml \
-  -logfile ${DATA_HOME/log/7dtd-server-$(date +%Y%m%d).log} \
+  -logfile ${DATA_HOME}/log/7dtd-server-$(date +%Y%m%d).log \
   -quit -batchmode -nographics -dedicated ${PARAMS}
