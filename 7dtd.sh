@@ -2,25 +2,26 @@
 set -e
 
 PARAMS=$@
-ZED_HOME=/7dtd
 
-cd ${ZED_HOME}
+# $DATA_HOME and $ZED_HOME are set in Dockerfile
+if [ ! -d ${DATA_HOME}/log ]; then
+  mkdir ${DATA_HOME}/log
+fi
 
-echo "Downloading Steam Cmd"
-su -l zed -c "wget http://media.steampowered.com/installer/steamcmd_linux.tar.gz -O steamcmd_linux.tar.gz"
-su -l zed -c "tar -zxf steamcmd_linux.tar.gz -C ./bin"
+# Copy default serverconfig.xml if doesn't exist
+if [ ! -f ${DATA_HOME}/serverconfig.xml ]; then
+  cp ${ZED_HOME}/serverconfig.xml ${DATA_HOME}/serverconfig.xml
+fi
 
-echo "Downloading 7 Days to Die Server"
-su -l zed -c "mkdir -p ${ZED_HOME}/server"
-su -l zed -c "${ZED_HOME}/bin/steamcmd.sh \
-   +login anonymous \
-   +force_install_dir ${ZED_HOME}/server \
-   +app_update 294420 \
-   +quit"
+${ZED_HOME}/bin/steamcmd.sh \
+  +login anonymous \
+  +force_install_dir ${DATA_HOME}/server \
+  +app_update 294420 \
+  +quit
 
-echo "Launching 7 Days to Die"
-export LD_LIBRARY_PATH=$ZED_HOME/server
-su -l zed -c "${ZED_HOME}/server/7DaysToDieServer.x86_64 \
-   -configfile=${ZED_HOME}/serverconfig.xml \
-   -logfile ${ZED_HOME}/server/output.log \
-   -quit -batchmode -nographics -dedicated $PARAMS"
+echo "$(date +%Y%m%d) Launching 7 Days to Die Server" >> ${DATA_HOME}/log/7dtd-server.log
+export LD_LIBRARY_PATH=${DATA_HOME}/server:$LD_LIBRARY_PATH
+${DATA_HOME}/server/7DaysToDieServer.x86_64 \
+  -configfile=${DATA_HOME}/serverconfig.xml \
+  -logfile ${DATA_HOME}/log/7dtd-server.log \
+  -quit -batchmode -nographics -dedicated ${PARAMS}

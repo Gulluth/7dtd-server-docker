@@ -1,0 +1,22 @@
+version: '2.1'
+
+services:
+  7dtd:
+    build:
+      context: .
+    container_name: 7dtd
+    image: 7dtd:latest
+    networks: 
+      - host
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8082:8081"
+      - "26900:26900/udp"
+      - "26901:26901/udp"
+      - "26902:26902/udp"
+    volumes:
+      - /srv/docker/7dtd:/data
+
+networks:
+  host:
